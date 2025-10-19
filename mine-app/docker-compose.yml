@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  mineapp:
+    build: .
+    ports:
+      - "3000:3000"
+      - "3001:3000"
+      - "3002:3000"
+      - "3003:3000"
+      - "3004:3000"
+      - "3005:3000"
+    deploy:
+      replicas: 6
+      restart_policy:
+        condition: on-failure
+    environment:
+      - PORT=3000
