@@ -1,0 +1,21 @@
+{
+  "name": "mine-app",
+  "version": "1.0.0",
+  "description": "🚀 Mine App backend + frontend",
+  "scripts": {
+    "start": "meteor run --port 3000",
+    "build": "echo \"🚀 Build step complete\"",
+    "postinstall": "meteor npm install",
+    "lint": "eslint . --ext .js,.jsx"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "meteor-node-stubs": "^1.2.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^6.0.1"
+  }
+}
