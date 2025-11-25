@@ -1,0 +1,27 @@
+{
+  "name": "yodhehwebx",
+  "version": "1.0.0",
+  "description": "Meteor app locked to v2.15.1",
+  "private": true,
+  "scripts": {
+    "start": "meteor run --release 2.15.1",
+    "dev": "meteor run --release 2.15.1",
+    "build": "meteor build ../build --release 2.15.1",
+    "test": "meteor test --release 2.15.1"
+  },
+  "meteor": {
+    "release": "2.15.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.24.0",
+    "meteor-node-stubs": "^1.2.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0 <=16.x",
+    "npm": ">=6.0.0"
+  }
+}
