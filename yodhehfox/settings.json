@@ -1,0 +1,9 @@
+{
+  "public": {
+    "appName": "Mine App",
+    "environment": "production"
+  },
+  "private": {
+    "ROOT_URL": "https://yodhehfox.meteorapp.com"
+  }
+}
