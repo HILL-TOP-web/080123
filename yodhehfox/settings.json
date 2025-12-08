@@ -1,0 +1,9 @@
+{
+  "public": {
+    "appName": "Mine App"
+  },
+  "private": {
+    "MONGO_URL": "mongodb+srv://oluwayimikad0_db_user:MySecretPass123@cluster0.leilj77.mongodb.net/?appName=Cluster0",
+    "ROOT_URL": "https://yodhehfox.onrender.com"
+  }
+}
