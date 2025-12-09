@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mine App – Settings</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0a0a0a, #1b1b2d);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .section {
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(6px);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item span {
+      font-size: 1.1rem;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .logout-btn {
+      width: 100%;
+      margin-top: 30px;
+      padding: 15px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #ff2222;
+    }
+
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-around;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-item {
+      color: white;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Settings</h1>
+
+  <!-- Profile -->
+  <div class="section">
+    <div class="section-title">Profile</div>
+
+    <div class="item">
+      <span>Name</span>
+      <span>Daniel David Oluwayimika</span>
+    </div>
+
+    <div class="item">
+      <span>User ID</span>
+      <span>#A10039</span>
+    </div>
+
+    <div class="item">
+      <span>Email</span>
+      <span>example@mail.com</span>
+    </div>
+  </div>
+
+  <!-- Preferences -->
+  <div class="section">
+    <div class="section-title">Preferences</div>
+
+    <div class="item">
+      <span>Currency</span>
+      <select>
+        <option>USD</option>
+        <option>NGN</option>
+      </select>
+    </div>
+
+    <div class="item">
+      <span>Display SKD</span>
+      <select>
+        <option>Exact</option>
+        <option>Shortened</option>
+      </select>
+    </div>
+
+    <div class="item">
+      <span>Notifications</span>
+      <select>
+        <option>Enabled</option>
+        <option>Disabled</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="section">
+    <div class="section-title">Security</div>
+
+    <div class="item">
+      <span>Change Password</span>
+      <span>➜</span>
+    </div>
+
+    <div class="item">
+      <span>Two-Factor Auth</span>
+      <span>➜</span>
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">Log Out</button>
+
+  <div class="footer-nav">
+    <a href="main.html" class="nav-item">Home</a>
+    <a href="wallet.html" class="nav-item">Wallet</a>
+    <a href="earn.html" class="nav-item">Earn</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+  </div>
+
+  <script>
+    function logout() {
+      alert("You have been logged out.");
+    }
+  </script>
+
+</body>
+  </html>
