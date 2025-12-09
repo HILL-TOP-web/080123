@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mine App – Admin Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0a0a0a, #101020);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .stats-grid {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    .stat-title {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .section {
+      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(6px);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background: #00c6ff;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      color: black;
+    }
+
+    .btn:hover {
+      background: #28ffbf;
+    }
+
+    .danger {
+      background: #ff4444;
+    }
+
+    .danger:hover {
+      background: #ff2222;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1>Admin Dashboard</h1>
+
+  <!-- Stats Overview -->
+  <div class="stats-grid">
+
+    <div class="stat-box">
+      <div class="stat-title">Total Users</div>
+      <div class="stat-value" id="usersCount">1,024</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">Total SKD Mined</div>
+      <div class="stat-value" id="totalMined">18,500 SKD</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">Withdrawals</div>
+      <div class="stat-value" id="withdrawCount">740</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">Online Now</div>
+      <div class="stat-value" id="onlineUsers">120</div>
+    </div>
+
+  </div>
+
+  <!-- Control Section -->
+  <div class="section">
+    <div class="section-title">Admin Controls</div>
+
+    <button class="btn" onclick="adjustRate()">Adjust Mining Rate</button>
+    <button class="btn" onclick="announcement()">Send Announcement</button>
+    <button class="btn" onclick="viewReports()">View User Reports</button>
+    <button class="btn" onclick="reviewKYC()">Review KYC</button>
+    <button class="btn danger" onclick="freeze()">Freeze User Account</button>
+  </div>
+
+  <!-- System Section -->
+  <div class="section">
+    <div class="section-title">System Tools</div>
+
+    <button class="btn" onclick="backupData()">Backup Database</button>
+    <button class="btn" onclick="restoreData()">Restore Database</button>
+    <button class="btn" onclick="clearLogs()">Clear System Logs</button>
+  </div>
+
+  <script>
+    function adjustRate() {
+      alert("Mining rate adjustment panel coming soon.");
+    }
+
+    function announcement() {
+      const msg = prompt("Enter announcement message:");
+      if (msg) alert("Announcement sent:\n" + msg);
+    }
+
+    function viewReports() {
+      alert("Opening user reports...");
+    }
+
+    function reviewKYC() {
+      alert("Reviewing KYC documents...");
+    }
+
+    function freeze() {
+      const user = prompt("Enter user ID to freeze:");
+      if (user) alert("User " + user + " has been frozen.");
+    }
+
+    function backupData() {
+      alert("Database backup created.");
+    }
+
+    function restoreData() {
+      alert("Restore panel opening...");
+    }
+
+    function clearLogs() {
+      alert("System logs cleared.");
+    }
+  </script>
+
+</body>
+</html>
