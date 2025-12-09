@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mine App – Automatic Mining</title>
+
+  <style>
+    :root {
+      --bg1: #0f0f0f;
+      --bg2: #1a1a3d;
+      --glass: rgba(255,255,255,0.06);
+      --accent: #00c6ff;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: #fff;
+      padding: 18px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 12px auto;
+    }
+
+    header {
+      text-align: center;
+      margin: 14px 0 20px;
+    }
+
+    header h1 { margin: 0; font-size: 1.6rem; letter-spacing: 0.6px; }
+    header p { margin: 6px 0 0; opacity: 0.85; }
+
+    .panel {
+      background: var(--glass);
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+    }
+
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .col { flex:1; min-width: 160px; }
+
+    .large { font-size: 1.6rem; font-weight:700; }
+    .muted { opacity: 0.85; font-size:0.95rem; }
+
+    .big-balance {
+      text-align: center;
+      padding: 18px;
+      margin: 12px 0;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .controls {
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    button.btn {
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: none;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .btn-start { background: var(--accent); color: #000; }
+    .btn-pause { background: #ffd24d; color: #000; }
+    .btn-stop { background: #ff6b6b; color: #fff; }
+
+    .stat-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.03);
+      padding: 12px;
+      border-radius:10px;
+      text-align:center;
+    }
+
+    .stat .title { font-size:.95rem; opacity:.85; }
+    .stat .value { margin-top:8px; font-weight:700; font-size:1.1rem; }
+
+    .meter {
+      height: 10px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+
+    .meter > i {
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg,#00c6ff,#28ffbf);
+      transition: width 0.5s linear;
+    }
+
+    footer {
+      margin-top:18px;
+      text-align:center;
+      opacity:0.9;
+      font-size:0.95rem;
+    }
+
+    .small { font-size:0.86rem; opacity:0.8; }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #00c6ff;
+      margin-top: 6px;
+    }
+
+    .note {
+      margin-top:10px;
+      font-size:0.9rem;
+      opacity:0.8;
+    }
+
+    @media (max-width:420px) {
+      .controls { flex-direction:column; }
+      .row { gap:8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <h1>Automatic Mining</h1>
+      <p>Earn SKD automatically while the session is active. Convert and withdraw later via SkyWallet.</p>
+    </header>
+
+    <div class="panel">
+      <div class="row">
+        <div class="col big-balance">
+          <div class="muted">Session Balance</div>
+          <div id="sessionEarned" class="large">0.000 SKD</div>
+          <div class="muted small">Session uptime: <span id="uptime">00:00:00</span></div>
+        </div>
+
+        <div class="col">
+          <div class="muted">Total Wallet Balance</div>
+          <div id="totalBalance" class="large">0.000 SKD</div>
+
+          <div class="muted" style="margin-top:8px;">Conversion</div>
+          <div class="muted small">USD: <span id="usdVal">$0.00</span> · NGN: <span id="ngnVal">₦0.00</span></div>
+
+          <div class="meter" title="Mining progress">
+            <i id="meterFill"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="title">Mining Rate</div>
+          <div class="value"><span id="rateDisplay">0.002</span> SKD / s</div>
+        </div>
+
+        <div class="stat">
+          <div class="title">Per Click (manual)</div>
+          <div class="value">0.001 SKD</div>
+        </div>
+
+        <div class="stat">
+          <div class="title">Auto Sync</div>
+          <div class="value"><span id="syncState">Not synced</span></div>
+        </div>
+
+        <div class="stat">
+          <div class="title">Visibility</div>
+          <div class="value" id="visibilityState">Visible</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="muted">Adjust mining speed</div>
+        <input type="range" id="rateRange" min="0.001" max="0.02" step="0.001" value="0.002" />
+        <div class="note small">Slide to raise/lower SKD per second. This only affects the local simulation — you can lock rate server-side later.</div>
+      </div>
+
+      <div class="controls" style="margin-top:14px;">
+        <button class="btn btn-start" id="startBtn">START</button>
+        <button class="btn btn-pause" id="pauseBtn" disabled>PAUSE</button>
+        <button class="btn btn-stop" id="stopBtn" disabled>STOP</button>
+        <button class="btn" id="syncBtn">SYNC</button>
+      </div>
+
+      <div class="note">Server endpoint placeholders:
+        <code style="display:block;margin-top:6px;">POST /api/wallet/earn (payload: { userId, amount, timestamp })</code>
+      </div>
+
+    </div>
+
+    <footer>
+      <div class="small">Balance persists locally. Use the SYNC button to push earnings to your backend (placeholder).</div>
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************************
+     * Automatic mining simulation
+     * - Persists to localStorage keys: mine_totalBalance, mine_sessionEarned, mine_state
+     * - Handles page visibility (pauses when hidden)
+     * - Placeholder syncToServer function for backend integration
+     * - Uses user's preference: 1 SKD = $2000 by default
+     ************************************************************************/
+
+    // Config / constants
+    const SKD_USD = 2000;           // from your preference (1 SKD = $2000)
+    const USD_NGN = 1600;           // example rate for conversion (you can fetch live later)
+    const STORAGE_KEYS = {
+      total: 'mine_totalBalance',
+      session: 'mine_sessionEarned',
+      state: 'mine_state', // 'running'|'paused'|'stopped'
+      startedAt: 'mine_startedAt'
+    };
+
+    // DOM
+    const totalBalanceEl = document.getElementById('totalBalance');
+    const sessionEarnedEl = document.getElementById('sessionEarned');
+    const uptimeEl = document.getElementById('uptime');
+    const usdValEl = document.getElementById('usdVal');
+    const ngnValEl = document.getElementById('ngnVal');
+    const rateRange = document.getElementById('rateRange');
+    const rateDisplay = document.getElementById('rateDisplay');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const meterFill = document.getElementById('meterFill');
+    const syncBtn = document.getElementById('syncBtn');
+    const syncStateEl = document.getElementById('syncState');
+    const visibilityStateEl = document.getElementById('visibilityState');
+
+    // State
+    let totalBalance = parseFloat(localStorage.getItem(STORAGE_KEYS.total) || '0');
+    let sessionEarned = parseFloat(localStorage.getItem(STORAGE_KEYS.session) || '0');
+    let state = localStorage.getItem(STORAGE_KEYS.state) || 'stopped'; // running|paused|stopped
+    let startedAt = parseInt(localStorage.getItem(STORAGE_KEYS.startedAt) || '0', 10);
+    let tickInterval = null;
+    let uptimeInterval = null;
+
+    // Helpers
+    function formatSKD(x) { return Number(x).toFixed(3) + ' SKD'; }
+    function formatUSD(x) { return '$' + Number(x).toFixed(2); }
+    function formatNGN(x) { return '₦' + Number(x).toLocaleString(); }
+    function saveState() {
+      localStorage.setItem(STORAGE_KEYS.total, totalBalance.toString());
+      localStorage.setItem(STORAGE_KEYS.session, sessionEarned.toString());
+      localStorage.setItem(STORAGE_KEYS.state, state);
+      localStorage.setItem(STORAGE_KEYS.startedAt, startedAt.toString());
+    }
+
+    // UI update
+    function refreshUI() {
+      totalBalanceEl.innerText = formatSKD(totalBalance);
+      sessionEarnedEl.innerText = formatSKD(sessionEarned);
+      const usd = totalBalance * SKD_USD;
+      const ngn = usd * USD_NGN;
+      usdValEl.innerText = formatUSD(usd);
+      ngnValEl.innerText = formatNGN(ngn);
+      rateDisplay.innerText = parseFloat(rateRange.value).toFixed(3);
+      // meter reflects session progress to arbitrary 60s bucket
+      const meterPct = Math.min(100, ( (sessionEarned % 1 ) * 100 ));
+      meterFill.style.width = meterPct + '%';
+      document.getElementById('visibilityState').innerText = document.visibilityState === 'visible' ? 'Visible' : 'Hidden';
+      syncStateEl.innerText = (localStorage.getItem('mine_lastSync') ? 'Synced' : 'Not synced');
+      // buttons
+      if (state === 'running') {
+        startBtn.disabled = true;
+        pauseBtn.disabled = false;
+        stopBtn.disabled = false;
+        startBtn.innerText = 'RUNNING';
+      } else if (state === 'paused') {
+        startBtn.disabled = false;
+        pauseBtn.disabled = true;
+        stopBtn.disabled = false;
+        startBtn.innerText = 'RESUME';
+      } else {
+        // stopped
+        startBtn.disabled = false;
+        pauseBtn.disabled = true;
+        stopBtn.disabled = true;
+        startBtn.innerText = 'START';
+      }
+    }
+
+    // Uptime display
+    function startUptimeClock() {
+      if (uptimeInterval) clearInterval(uptimeInterval);
+      uptimeInterval = setInterval(() => {
+        if (!startedAt) {
+          uptimeEl.innerText = '00:00:00';
+          return;
+        }
+        const seconds = Math.floor((Date.now() - startedAt) / 1000);
+        const h = String(Math.floor(seconds / 3600)).padStart(2,'0');
+        const m = String(Math.floor((seconds % 3600) / 60)).padStart(2,'0');
+        const s = String(seconds % 60).padStart(2,'0');
+        uptimeEl.innerText = `${h}:${m}:${s}`;
+      }, 500);
+    }
+
+    // Mining tick (runs every 1 second)
+    function startTick() {
+      if (tickInterval) return;
+      tickInterval = setInterval(() => {
+        const perSecond = parseFloat(rateRange.value); // SKD per sec
+        // If tab hidden, don't accrue (conservative)
+        if (document.visibilityState !== 'visible') return;
+        sessionEarned += perSecond;
+        totalBalance += perSecond;
+        saveState();
+        refreshUI();
+      }, 1000);
+    }
+
+    function stopTick() {
+      if (tickInterval) {
+        clearInterval(tickInterval);
+        tickInterval = null;
+      }
+    }
+
+    // Controls
+    function startMining() {
+      if (state === 'running') return;
+      state = 'running';
+      if (!startedAt) startedAt = Date.now();
+      saveState();
+      startTick();
+      startUptimeClock();
+      refreshUI();
+    }
+
+    function pauseMining() {
+      if (state !== 'running') return;
+      state = 'paused';
+      stopTick();
+      saveState();
+      refreshUI();
+    }
+
+    function stopMining() {
+      if (state === 'stopped') return;
+      state = 'stopped';
+      stopTick();
+      // Reset session earned and startedAt (but keep totalBalance)
+      sessionEarned = 0;
+      startedAt = 0;
+      saveState();
+      refreshUI();
+    }
+
+    // Sync placeholder - implement real auth and endpoint in backend
+    async function syncToServer() {
+      syncStateEl.innerText = 'Syncing...';
+      // Build payload
+      const payload = {
+        userId: localStorage.getItem('mine_userId') || 'guest',
+        amount: Number(sessionEarned.toFixed(6)),
+        total: Number(totalBalance.toFixed(6)),
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        // Placeholder: replace URL with your backend endpoint
+        // const res = await fetch('/api/wallet/earn', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(payload)
+        // });
+        // if (!res.ok) throw new Error('Sync failed: ' + res.status);
+        // const data = await res.json();
+
+        // Simulate network latency & success (remove when integrating)
+        await new Promise(r => setTimeout(r, 700));
+        localStorage.setItem('mine_lastSync', new Date().toISOString());
+        syncStateEl.innerText = 'Synced';
+        alert('Sync success (simulation). Replace placeholder with real API endpoint to actually push earnings.');
+      } catch (err) {
+        console.error(err);
+        syncStateEl.innerText = 'Sync failed';
+        alert('Sync failed: ' + err.message);
+      }
+    }
+
+    // Visibility handling: pause when hidden, resume only by user
+    document.addEventListener('visibilitychange', () => {
+      visibilityStateEl.innerText = document.visibilityState === 'visible' ? 'Visible' : 'Hidden';
+      // For safety, auto-pause when tab is hidden
+      if (document.visibilityState === 'hidden' && state === 'running') {
+        pauseMining();
+      }
+    });
+
+    // Wire UI
+    startBtn.addEventListener('click', () => {
+      startMining();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      pauseMining();
+    });
+
+    stopBtn.addEventListener('click', () => {
+      const ok = confirm('Stop mining? This will reset session earnings but keep total wallet balance.');
+      if (ok) stopMining();
+    });
+
+    syncBtn.addEventListener('click', () => {
+      syncToServer();
+    });
+
+    // Rate slider change
+    rateRange.addEventListener('input', () => {
+      rateDisplay.innerText = parseFloat(rateRange.value).toFixed(3);
+      // immediate UI feedback
+      refreshUI();
+    });
+
+    // Initialize
+    (function init() {
+      // restore
+      totalBalance = parseFloat(localStorage.getItem(STORAGE_KEYS.total) || '0');
+      sessionEarned = parseFloat(localStorage.getItem(STORAGE_KEYS.session) || '0');
+      state = localStorage.getItem(STORAGE_KEYS.state) || 'stopped';
+      startedAt = parseInt(localStorage.getItem(STORAGE_KEYS.startedAt) || '0', 10);
+      // if state was running before and tab closed, keep it paused to prevent abuse
+      if (state === 'running') state = 'paused';
+      refreshUI();
+      startUptimeClock();
+      // keep UI ticking to show realtime conversions even when not mining
+      setInterval(refreshUI, 1200);
+    })();
+
+    // Save on unload
+    window.addEventListener('beforeunload', () => {
+      saveState();
+    });
+
+  </script>
+</body>
+  </html>
