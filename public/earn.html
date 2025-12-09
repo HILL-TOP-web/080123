@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mine App – Earn</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #111, #1c1c3d);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .section {
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(6px);
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: #00c6ff;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      color: black;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: #28ffbf;
+    }
+
+    .reward-text {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-around;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-item {
+      color: white;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Earnings Center</h1>
+
+  <!-- Daily Reward -->
+  <div class="section">
+    <div class="section-title">Daily Check-in</div>
+    <p class="reward-text">Claim your daily reward every 24 hours.</p>
+    <button class="btn" onclick="claimDaily()">Claim 0.005 SKD</button>
+  </div>
+
+  <!-- Watch Ads -->
+  <div class="section">
+    <div class="section-title">Watch Ads</div>
+    <p class="reward-text">Earn SKD by watching rewarded ads.</p>
+    <button class="btn" onclick="watchAd()">Watch Ad (0.002 SKD)</button>
+  </div>
+
+  <!-- Stay Online -->
+  <div class="section">
+    <div class="section-title">Stay Online</div>
+    <p class="reward-text">Earn SKD automatically while staying on the app.</p>
+    <button class="btn" onclick="startTimer()">Start Timer</button>
+  </div>
+
+  <!-- Referral -->
+  <div class="section">
+    <div class="section-title">Referral Bonus</div>
+    <p class="reward-text">Invite friends and earn 0.01 SKD per signup.</p>
+    <button class="btn" onclick="copyRef()">Copy Referral Link</button>
+  </div>
+
+  <div class="footer-nav">
+    <a href="main.html" class="nav-item">Home</a>
+    <a href="wallet.html" class="nav-item">Wallet</a>
+    <a href="earn.html" class="nav-item">Earn</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+  </div>
+
+  <script>
+    function claimDaily() {
+      alert("Daily reward claimed: +0.005 SKD");
+    }
+
+    function watchAd() {
+      alert("Ad watched: +0.002 SKD\nAd monetization coming soon...");
+    }
+
+    function startTimer() {
+      alert("Timer started. You will earn SKD as long as you stay online.");
+    }
+
+    function copyRef() {
+      navigator.clipboard.writeText("https://mineapp.com/ref/12345");
+      alert("Referral link copied!");
+    }
+  </script>
+
+</body>
+</html>
