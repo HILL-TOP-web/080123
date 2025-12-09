@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mine App – Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0f0f0f, #1a1a3d);
+      color: white;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .wallet-box {
+      margin: 30px auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .wallet-balance {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .mine-btn {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.4rem;
+      background: #00c6ff;
+      color: black;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 25px;
+    }
+
+    .mine-btn:hover {
+      background: #28ffbf;
+    }
+
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-around;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-item {
+      color: white;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .earn-rate {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Mine App</h1>
+    <p>Your sky, your earnings.</p>
+  </div>
+
+  <div class="wallet-box">
+    <p>SkyCoin (SKD) Balance</p>
+    <div class="wallet-balance" id="coinBalance">0 SKD</div>
+
+    <p class="earn-rate">Mining rate: <strong>0.002 SKD / second</strong></p>
+    <p class="earn-rate">Per click: <strong>0.001 SKD</strong></p>
+
+    <button class="mine-btn" onclick="startMining()">START MINING</button>
+  </div>
+
+  <div class="footer-nav">
+    <a href="main.html" class="nav-item">Home</a>
+    <a href="wallet.html" class="nav-item">Wallet</a>
+    <a href="earn.html" class="nav-item">Earn</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+  </div>
+
+  <script>
+    let balance = 0;
+
+    function startMining() {
+      balance += 0.001;
+      document.getElementById('coinBalance').innerText = balance.toFixed(3) + " SKD";
+    }
+  </script>
+
+</body>
+</html>
