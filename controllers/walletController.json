@@ -1,0 +1,8 @@
+export const convertSKD = async (req, res) => {
+  const { skd, to } = req.body;
+
+  let rate = to === "NGN" ? 1500 : 1;
+  let result = skd * rate;
+
+  res.json({ result });
+};
