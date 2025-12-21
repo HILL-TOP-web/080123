@@ -1,0 +1,163 @@
+import React, { useEffect, useState } from "react";
+
+function App() {
+  const [wallet, setWallet] = useState(null);
+  const [skdAmount, setSkdAmount] = useState("");
+  const [withdrawAmt, setWithdrawAmt] = useState("");
+  const [bank, setBank] = useState("");
+  const [status, setStatus] = useState("");
+
+  // 🔄 Load wallet
+  async function loadWallet() {
+    try {
+      const res = await fetch("/wallet");
+      const data = await res.json();
+      setWallet(data);
+    } catch {
+      setStatus("❌ Failed to load wallet");
+    }
+  }
+
+  // ⛏️ AUTO-MINING every second
+  useEffect(() => {
+    loadWallet();
+
+    const interval = setInterval(async () => {
+      try {
+        await fetch("/mine", { method: "POST" });
+        loadWallet();
+      } catch {
+        setStatus("❌ Mining connection error");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🔁 Convert SKD
+  async function convert(currency) {
+    if (!skdAmount) {
+      setStatus("❌ Enter SKD amount");
+      return;
+    }
+
+    try {
+      await fetch("/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Number(skdAmount),
+          currency
+        })
+      });
+
+      setStatus("✅ Conversion successful");
+      setSkdAmount("");
+      loadWallet();
+    } catch {
+      setStatus("❌ Conversion failed");
+    }
+  }
+
+  // 💸 Withdraw
+  async function withdraw() {
+    if (!withdrawAmt || !bank) {
+      setStatus("❌ Fill all fields");
+      return;
+    }
+
+    try {
+      const res = await fetch("/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amountNGN: Number(withdrawAmt),
+          bank
+        })
+      });
+
+      const data = await res.json();
+      setStatus(data.message || data.error);
+      setWithdrawAmt("");
+      setBank("");
+      loadWallet();
+    } catch {
+      setStatus("❌ Withdrawal failed");
+    }
+  }
+
+  // ⏳ Loading
+  if (!wallet) {
+    return (
+      <div style={styles.body}>
+        <p>Loading wallet...</p>
+      </div>
+    );
+  }
+
+  // 🖥️ UI
+  return (
+    <div style={styles.body}>
+      <div style={styles.card}>
+        <h1>⛏️ Mine SKD</h1>
+        <p><strong>Balance:</strong> {wallet.balance} SKD</p>
+
+        <hr />
+
+        <h3>Convert</h3>
+        <input
+          placeholder="SKD amount"
+          value={skdAmount}
+          onChange={e => setSkdAmount(e.target.value)}
+        />
+        <button onClick={() => convert("NGN")}>SKD → ₦</button>
+        <button onClick={() => convert("USD")}>SKD → $</button>
+
+        <hr />
+
+        <h3>SkyWallet</h3>
+        <p>₦ Wallet: {wallet.wallet.ngn.toLocaleString()}</p>
+        <p>$ Wallet: {wallet.wallet.usd.toLocaleString()}</p>
+        <p>Locked: {wallet.locked.toLocaleString()}</p>
+
+        <hr />
+
+        <h3>Withdraw</h3>
+        <input
+          placeholder="₦ amount"
+          value={withdrawAmt}
+          onChange={e => setWithdrawAmt(e.target.value)}
+        />
+        <input
+          placeholder="Bank / Moniepoint"
+          value={bank}
+          onChange={e => setBank(e.target.value)}
+        />
+        <button onClick={withdraw}>Withdraw</button>
+
+        <p style={{ marginTop: "10px" }}>{status}</p>
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  body: {
+    background: "#0f0f0f",
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "white",
+    fontFamily: "Arial, sans-serif"
+  },
+  card: {
+    background: "#1a1a1a",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "340px",
+    textAlign: "center"
+  }
+};
+
+export default App;
