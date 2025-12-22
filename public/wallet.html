@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mine App – Wallet</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0a0a0a, #1a1a30);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 2rem;
+    }
+
+    .wallet-box {
+      margin: 30px auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .balance {
+      font-size: 2.2rem;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .convert-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+    }
+
+    .convert-item {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .withdraw-btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 25px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: #00c6ff;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      color: black;
+    }
+
+    .withdraw-btn:hover {
+      background: #28ffbf;
+    }
+
+    .history-box {
+      margin-top: 35px;
+    }
+
+    .history-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .history-item {
+      background: rgba(255, 255, 255, 0.07);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-around;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-item {
+      color: white;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>SkyWallet</h1>
+
+  <div class="wallet-box">
+    <p>SkyCoin (SKD) Balance</p>
+    <div class="balance skd-balance">0.000 SKD</div>
+
+    <div class="convert-box">
+      <div class="convert-item">USD: <span class="usd-value">$0.00</span></div>
+      <div class="convert-item">NGN: <span class="ngn-value">₦0.00</span></div>
+    </div>
+
+    <button class="withdraw-btn">Withdraw to Moniepoint</button>
+  </div>
+
+  <div class="history-box">
+    <div class="history-title">Transaction History</div>
+
+    <div class="history-list">
+      <div class="history-item">No transactions yet...</div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="main.html" class="nav-item">Home</a>
+    <a href="wallet.html" class="nav-item">Wallet</a>
+    <a href="earn.html" class="nav-item">Earn</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+  </div>
+
+  <script>
+    let balance = 0;
+
+    const SKD_USD = 2000; // 1 SKD = $2000
+    const USD_NGN = 1600; // example rate
+
+    const skdBalanceEl = document.querySelector(".skd-balance");
+    const usdValueEl = document.querySelector(".usd-value");
+    const ngnValueEl = document.querySelector(".ngn-value");
+    const withdrawBtn = document.querySelector(".withdraw-btn");
+
+    function updateValues() {
+      skdBalanceEl.textContent = balance.toFixed(3) + " SKD";
+      usdValueEl.textContent = "$" + (balance * SKD_USD).toFixed(2);
+      ngnValueEl.textContent =
+        "₦" + (balance * SKD_USD * USD_NGN).toLocaleString();
+    }
+
+    function withdraw() {
+      alert(
+        "Withdrawal system coming soon...\nConnected to Moniepoint only."
+      );
+    }
+
+    withdrawBtn.addEventListener("click", withdraw);
+
+    updateValues();
+  </script>
+
+</body>
+  </html>
