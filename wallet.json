@@ -1,0 +1,16 @@
+{
+  "balance": 0,
+  "wallet": { "ngn": 0, "usd": 0 },
+  "locked": 0,
+  "lastMined": 1700000000000,
+  "transactions": [
+    {
+      "type": "withdraw",
+      "skd": 0.01,
+      "ngn": 30000,
+      "status": "success",
+      "reference": "abc123",
+      "timestamp": 1700000000000
+    }
+  ]
+}
