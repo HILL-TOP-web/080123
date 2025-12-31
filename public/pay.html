@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fund Wallet</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+
+  <h2>Fund Wallet</h2>
+
+  <button onclick="payWithPaystack()">
+    Fund Wallet / Unlock Withdrawal
+  </button>
+
+  <script>
+    function payWithPaystack() {
+      let handler = PaystackPop.setup({
+        key: "pk_live_xxxxxxxxxxxxx", // PAYSTACK PUBLIC KEY
+        email: "user@email.com",
+        amount: 300000, // ₦3,000 in kobo
+        currency: "NGN",
+        callback: function (response) {
+          // Send reference to backend for verification
+          fetch("/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              reference: response.reference
+            })
+          });
+        },
+        onClose: function () {
+          alert("Payment window closed");
+        }
+      });
+
+      handler.openIframe();
+    }
+  </script>
+
+</body>
+</html>
