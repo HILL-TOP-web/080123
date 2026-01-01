@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyWallet – Mine App</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#0f0f0f;
+  color:#ffffff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+
+.card {
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:10px;
+  width:360px;
+  text-align:center;
+  box-shadow:0 0 15px rgba(0,0,0,0.7);
+}
+
+h1, h2 {
+  margin:10px 0;
+}
+
+input, button {
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:6px;
+  border:none;
+  font-size:14px;
+}
+
+input {
+  background:#111;
+  color:#fff;
+}
+
+button {
+  background:#00ff99;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover {
+  background:#00cc7a;
+}
+
+.divider {
+  margin:15px 0;
+  height:1px;
+  background:#333;
+}
+
+.status {
+  margin-top:10px;
+  font-size:14px;
+  min-height:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>⛏️ Mine SKD</h1>
+  <p class="balance">Balance: 0 SKD</p>
+
+  <div class="divider"></div>
+
+  <h2>Convert SKD</h2>
+  <input class="amount" type="number" placeholder="Enter SKD amount">
+  <p>₦ <span class="convertedNGN">0</span></p>
+  <p>$ <span class="convertedUSD">0</span></p>
+
+  <div class="divider"></div>
+
+  <h2>SkyWallet</h2>
+  <p class="walletNGN">₦ Wallet: 0</p>
+  <p class="walletUSD">$ Wallet: 0</p>
+  <p class="locked">Locked: 0</p>
+
+  <div class="divider"></div>
+
+  <h2>Withdraw (Simulation)</h2>
+  <input class="withdrawAmt" type="number" placeholder="SKD amount">
+  <button class="withdrawBtn">Withdraw</button>
+
+  <div class="status"></div>
+</div>
+
+<script>
+/* =========================
+   LOCAL FRONTEND STATE
+========================= */
+
+const SKD_TO_NGN = 3000000;
+const SKD_TO_USD = 2000;
+const MINE_RATE = 20; // ✅ 20 SKD PER SECOND
+
+let wallet = {
+  balance: 0,
+  ngn: 0,
+  usd: 0,
+  locked: 0
+};
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const balanceEl = document.querySelector(".balance");
+const walletNGNEl = document.querySelector(".walletNGN");
+const walletUSDEl = document.querySelector(".walletUSD");
+const lockedEl = document.querySelector(".locked");
+const statusEl = document.querySelector(".status");
+const convertedNGNEl = document.querySelector(".convertedNGN");
+const convertedUSDEl = document.querySelector(".convertedUSD");
+const amountInput = document.querySelector(".amount");
+const withdrawInput = document.querySelector(".withdrawAmt");
+const withdrawBtn = document.querySelector(".withdrawBtn");
+
+/* =========================
+   RENDER UI
+========================= */
+
+function render() {
+  balanceEl.textContent = `Balance: ${wallet.balance.toFixed(2)} SKD`;
+  walletNGNEl.textContent = `₦ Wallet: ${wallet.ngn.toLocaleString()}`;
+  walletUSDEl.textContent = `$ Wallet: ${wallet.usd.toLocaleString()}`;
+  lockedEl.textContent = `Locked: ${wallet.locked}`;
+}
+
+/* =========================
+   AUTO MINING
+========================= */
+
+setInterval(() => {
+  wallet.balance += MINE_RATE;
+  render();
+}, 1000);
+
+/* =========================
+   CONVERSION LOGIC
+========================= */
+
+amountInput.addEventListener("input", () => {
+  const skd = Number(amountInput.value) || 0;
+  convertedNGNEl.textContent = (skd * SKD_TO_NGN).toLocaleString();
+  convertedUSDEl.textContent = (skd * SKD_TO_USD).toLocaleString();
+});
+
+/* =========================
+   WITHDRAW SIMULATION
+========================= */
+
+withdrawBtn.addEventListener("click", () => {
+  const skd = Number(withdrawInput.value);
+
+  if (!skd || skd <= 0) {
+    statusEl.textContent = "❌ Enter a valid SKD amount";
+    return;
+  }
+
+  if (skd > wallet.balance) {
+    statusEl.textContent = "❌ Insufficient balance";
+    return;
+  }
+
+  wallet.balance -= skd;
+  wallet.ngn += skd * SKD_TO_NGN;
+
+  statusEl.textContent =
+    `✅ Withdrawn ${skd} SKD → ₦ ${(skd * SKD_TO_NGN).toLocaleString()}`;
+
+  withdrawInput.value = "";
+  render();
+});
+
+/* =========================
+   INIT
+========================= */
+
+render();
+</script>
+
+</body>
+</html>
