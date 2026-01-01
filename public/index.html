@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyWallet – Mine App</title>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#0f0f0f;
+  color:#ffffff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+
+.card {
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:10px;
+  width:360px;
+  text-align:center;
+  box-shadow:0 0 15px rgba(0,0,0,0.7);
+}
+
+h1, h2 { margin:10px 0; }
+
+input, button {
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:6px;
+  border:none;
+  font-size:14px;
+}
+
+input { background:#111; color:#fff; }
+
+button {
+  background:#00ff99;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover { background:#00cc7a; }
+
+.divider {
+  margin:15px 0;
+  height:1px;
+  background:#333;
+}
+
+.status {
+  margin-top:10px;
+  font-size:14px;
+  min-height:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>⛏️ Mine SKD</h1>
+  <p class="balance">Balance: 0 SKD</p>
+
+  <div class="divider"></div>
+
+  <h2>Convert SKD</h2>
+  <input class="amount" type="number" placeholder="Enter SKD amount">
+  <p>₦ <span class="convertedNGN">0</span></p>
+
+  <div class="divider"></div>
+
+  <h2>Withdraw to Paystack (NGN)</h2>
+  <input class="email" type="email" placeholder="Paystack email">
+  <input class="withdrawAmt" type="number" placeholder="SKD amount">
+  <button class="withdrawBtn">Withdraw NGN</button>
+
+  <div class="status"></div>
+</div>
+
+<script>
+/* =========================
+   CONSTANTS
+========================= */
+const SKD_TO_NGN = 3000000;
+const MINE_RATE = 20;
+
+/* =========================
+   WALLET STATE
+========================= */
+let wallet = {
+  balance: 0
+};
+
+/* =========================
+   ELEMENTS
+========================= */
+const balanceEl = document.querySelector(".balance");
+const convertedNGNEl = document.querySelector(".convertedNGN");
+const amountInput = document.querySelector(".amount");
+const withdrawInput = document.querySelector(".withdrawAmt");
+const emailInput = document.querySelector(".email");
+const withdrawBtn = document.querySelector(".withdrawBtn");
+const statusEl = document.querySelector(".status");
+
+/* =========================
+   RENDER
+========================= */
+function render() {
+  balanceEl.textContent = `Balance: ${wallet.balance.toFixed(2)} SKD`;
+}
+
+/* =========================
+   AUTO MINING
+========================= */
+setInterval(() => {
+  wallet.balance += MINE_RATE;
+  render();
+}, 1000);
+
+/* =========================
+   CONVERSION
+========================= */
+amountInput.addEventListener("input", () => {
+  const skd = Number(amountInput.value) || 0;
+  convertedNGNEl.textContent =
+    (skd * SKD_TO_NGN).toLocaleString();
+});
+
+/* =========================
+   PAYSTACK WITHDRAW (NGN)
+========================= */
+withdrawBtn.addEventListener("click", () => {
+  const skd = Number(withdrawInput.value);
+  const email = emailInput.value;
+
+  if (!email || !skd || skd <= 0) {
+    statusEl.textContent = "❌ Enter email and valid SKD amount";
+    return;
+  }
+
+  if (skd > wallet.balance) {
+    statusEl.textContent = "❌ Insufficient SKD balance";
+    return;
+  }
+
+  const amountNGN = skd * SKD_TO_NGN;
+
+  const handler = PaystackPop.setup({
+    key: "pk_live_26059c1f58162a837d76fc24b3d5e5290a049015", // 🔴 YOUR PUBLIC KEY
+    email: email,
+    amount: amountNGN * 100, // Kobo
+    currency: "NGN",
+    callback: function (response) {
+      wallet.balance -= skd;
+      statusEl.textContent =
+        "✅ Payment successful. Ref: " + response.reference;
+      render();
+    },
+    onClose: function () {
+      statusEl.textContent = "❌ Payment cancelled";
+    }
+  });
+
+  handler.openIframe();
+});
+
+/* =========================
+   INIT
+========================= */
+render();
+</script>
+
+</body>
+</html>
