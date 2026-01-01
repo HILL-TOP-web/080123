@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyWallet – Mine App</title>
+  <style>
+    body {
+      font-family: Arial;
+      background:#0f0f0f;
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+    }
+    .card {
+      background:#1a1a1a;
+      padding:20px;
+      border-radius:8px;
+      width:340px;
+      text-align:center;
+      box-shadow:0 0 10px rgba(0,0,0,0.6);
+    }
+    input, button {
+      width:100%;
+      padding:12px;
+      margin-top:8px;
+      border-radius:4px;
+      border:none;
+    }
+    button {
+      background:#00ff99;
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    button:hover { background:#00cc7a; }
+    .divider { margin:15px 0; height:1px; background:#333; }
+    .status { margin-top:10px; font-size:14px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>⛏️ Mine SKD</h1>
+  <p class="balance">Balance: 0 SKD</p>
+
+  <div class="divider"></div>
+
+  <h2>Convert</h2>
+  <input class="amount" placeholder="SKD amount">
+  <p>₦: <span class="convertedNGN">0</span></p>
+  <p>$: <span class="convertedUSD">0</span></p>
+
+  <div class="divider"></div>
+
+  <h2>SkyWallet</h2>
+  <p class="walletNGN">₦ Wallet: 0</p>
+  <p class="walletUSD">$ Wallet: 0</p>
+  <p class="locked">Locked: 0</p>
+
+  <div class="divider"></div>
+
+  <h2>Withdraw</h2>
+  <input class="withdrawAmt" placeholder="SKD amount">
+  <input class="recipient" placeholder="Bank / Moniepoint recipient code">
+  <button class="withdrawBtn">Withdraw</button>
+
+  <div class="status"></div>
+</div>
+
+<script>
+const balanceEl = document.querySelector(".balance");
+const walletNGNEl = document.querySelector(".walletNGN");
+const walletUSDEl = document.querySelector(".walletUSD");
+const lockedEl = document.querySelector(".locked");
+const statusEl = document.querySelector(".status");
+const convertedNGNEl = document.querySelector(".convertedNGN");
+const convertedUSDEl = document.querySelector(".convertedUSD");
+const amountInput = document.querySelector(".amount");
+const withdrawBtn = document.querySelector(".withdrawBtn");
+
+let SKD_TO_NGN = 3000;
+let SKD_TO_USD = 2000;
+
+// Load wallet from backend
+async function loadWallet() {
+  try {
+    const res = await fetch("/wallet");
+    const data = await res.json();
+    if (!data.success) throw new Error("Failed to load wallet");
+
+    const wallet = data.wallet;
+    balanceEl.innerText = `Balance: ${wallet.balance || 0} SKD`;
+    walletNGNEl.innerText = `₦ Wallet: ${wallet.wallet.ngn.toLocaleString()}`;
+    walletUSDEl.innerText = `$ Wallet: ${wallet.wallet.usd.toLocaleString()}`;
+    lockedEl.innerText = `Locked: ${wallet.locked ? wallet.locked : 0}`;
+
+    // Use backend rates if available
+    if (wallet.SKDtoNGN) SKD_TO_NGN = wallet.SKDtoNGN;
+    if (wallet.SKDtoUSD) SKD_TO_USD = wallet.SKDtoUSD;
+
+    // Update conversions
+    const skd = Number(amountInput.value) || 0;
+    convertedNGNEl.innerText = (skd * SKD_TO_NGN).toLocaleString();
+    convertedUSDEl.innerText = (skd * SKD_TO_USD).toLocaleString();
+
+  } catch (err) {
+    console.error(err);
+    statusEl.innerText = "❌ Failed to load wallet";
+  }
+}
+
+// Convert SKD input
+amountInput.addEventListener("input", () => {
+  const skd = Number(amountInput.value) || 0;
+  convertedNGNEl.innerText = (skd * SKD_TO_NGN).toLocaleString();
+  convertedUSDEl.innerText = (skd * SKD_TO_USD).toLocaleString();
+});
+
+// Withdraw SKD
+withdrawBtn.addEventListener("click", async () => {
+  const skdAmount = Number(document.querySelector(".withdrawAmt").value);
+  const recipientCode = document.querySelector(".recipient").value;
+
+  if (!skdAmount || !recipientCode) {
+    statusEl.innerText = "❌ Enter SKD amount and recipient code";
+    return;
+  }
+
+  try {
+    const res = await fetch("/withdraw/ngn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ skdAmount, recipientCode })
+    });
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Withdraw failed");
+
+    statusEl.innerText = `✅ Withdrawal successful! NGN: ${data.amountNGN}`;
+    loadWallet();
+
+  } catch (err) {
+    console.error(err);
+    statusEl.innerText = "❌ Withdrawal failed: " + err.message;
+  }
+});
+
+// Auto-mine every second
+setInterval(async () => {
+  await fetch("/wallet/mine", { method: "POST" });
+  loadWallet();
+}, 1000);
+
+loadWallet();
+</script>
+</body>
+  </html>
